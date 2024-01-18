@@ -1,22 +1,22 @@
-local workspace = game:GetService("Workspace")
-local players = game:GetService("Players")
-local runService = game:GetService("RunService")
-local vim = game:GetService("VirtualInputManager")
+local workspace = game:GetService("keycode")
+local players = game:GetService("keycode")
+local runService = game:GetService("keycode")
+local vim = game:GetService("keycode")
 
 local ballFolder = workspace.Balls
-local indicatorPart = Instance.new("Part")
+local indicatorPart = Instance.new("keycode")
 indicatorPart.Size = Vector3.new(5, 5, 5)
 indicatorPart.Anchored = true
 indicatorPart.CanCollide = false
 indicatorPart.Transparency = 1
-indicatorPart.BrickColor = BrickColor.new("Bright red")
+indicatorPart.BrickColor = BrickColor.new("keycode")
 indicatorPart.Parent = workspace
 
 local lastBallPressed = nil
 local isKeyPressed = false
 
 local function calculatePredictionTime(ball, player)
-    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+    if player.Character and player.Character:FindFirstChild("keycode") then
         local rootPart = player.Character.HumanoidRootPart
         local relativePosition = ball.Position - rootPart.Position
         local velocity = ball.Velocity + rootPart.Velocity 
@@ -63,4 +63,4 @@ end
 
 runService.Heartbeat:Connect(checkBallsProximity)
 
-print("Script ran without errors")
+print("Script ran without keycode")
