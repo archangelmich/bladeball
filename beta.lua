@@ -18,7 +18,7 @@ local isKeyPressed = false
 local function calculatePredictionTime(ball, player)
     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         local rootPart = player.Character.HumanoidRootPart
-        local relativePosition = ball.Position - rootPart.Position
+        local relativePosition = ball:FindFirstChild("Body") and ball.Body.Position or ball.Position - rootPart.Position
         local velocity = ball.Velocity + rootPart.Velocity 
         local a = (ball.Size.magnitude / 2) 
         local b = relativePosition.magnitude
@@ -30,7 +30,7 @@ local function calculatePredictionTime(ball, player)
 end
 
 local function updateIndicatorPosition(ball)
-    indicatorPart.Position = ball.Position
+    indicatorPart.Position = ball:FindFirstChild("Body") and ball.Body.Position or ball.Position
 end
 
 local function checkProximityToPlayer(ball, player)
@@ -42,7 +42,7 @@ local function checkProximityToPlayer(ball, player)
 
     if predictionTime <= ballSpeedThreshold and realBallAttribute == true and target == player.Name and not isKeyPressed then
         vim:SendKeyEvent(true, Enum.KeyCode.F, false, nil)
-        wait(0.005)
+        task.wait()
         vim:SendKeyEvent(false, Enum.KeyCode.F, false, nil)
         lastBallPressed = ball
         isKeyPressed = true
@@ -61,6 +61,4 @@ local function checkBallsProximity()
     end
 end
 
-runService.Heartbeat:Connect(checkBallsProximity)
-
-print("Script ran without errors")
+runService.RenderStepped:Connect(checkBallsProximity)
