@@ -1,8 +1,6 @@
-local workspace = game:GetService("Workspace")
+local replicatedStorage = game:GetService("ReplicatedStorage")
 local players = game:GetService("Players")
 local runService = game:GetService("RunService")
-local vim = game:GetService("VirtualInputManager")
-
 local ballFolder = workspace.Balls
 local indicatorPart = Instance.new("Part")
 indicatorPart.Size = Vector3.new(5, 5, 5)
@@ -11,9 +9,6 @@ indicatorPart.CanCollide = false
 indicatorPart.Transparency = 1
 indicatorPart.BrickColor = BrickColor.new("Bright red")
 indicatorPart.Parent = workspace
-
-local lastBallPressed = nil
-local isKeyPressed = false
 
 local function calculatePredictionTime(ball, player)
     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
@@ -33,6 +28,8 @@ local function updateIndicatorPosition(ball)
     indicatorPart.Position = ball.Position
 end
 
+local parryButtonPress = replicatedStorage.Remotes.ParryButtonPress
+
 local function checkProximityToPlayer(ball, player)
     local predictionTime = calculatePredictionTime(ball, player)
     local realBallAttribute = ball:GetAttribute("realBall")
@@ -40,14 +37,8 @@ local function checkProximityToPlayer(ball, player)
     
     local ballSpeedThreshold = math.max(0.4, 0.6 - ball.Velocity.magnitude * 0.01)
 
-    if predictionTime <= ballSpeedThreshold and realBallAttribute == true and target == player.Name and not isKeyPressed then
-        vim:SendKeyEvent(true, Enum.KeyCode.F, false, nil)
-        wait(0.005)
-        vim:SendKeyEvent(false, Enum.KeyCode.F, false, nil)
-        lastBallPressed = ball
-        isKeyPressed = true
-    elseif lastBallPressed == ball and (predictionTime > ballSpeedThreshold or realBallAttribute ~= true or target ~= player.Name) then
-        isKeyPressed = false
+    if predictionTime <= ballSpeedThreshold and realBallAttribute == true and target == player.Name then
+        parryButtonPress:Fire()
     end
 end
 
@@ -62,5 +53,3 @@ local function checkBallsProximity()
 end
 
 runService.Heartbeat:Connect(checkBallsProximity)
-
-print("Script ran without errors")
